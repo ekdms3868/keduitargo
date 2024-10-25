@@ -1,0 +1,39 @@
+--- 
+# svc-shop
+kind: Service
+apiVersion: v1
+metadata:
+  name: svc-shop # rule의 svc-shop과 같아야 함
+spec:
+  selector:
+    app: shop # Pod에서 정의한 Pod의 label과 같아야 함
+  # type: ClusterIP 기본이 ClusterIP라 안 적어도 됨
+  ports:
+  - port: 80
+    targetPort: 80
+
+---
+# deploy-shop
+apiVersion: apps/v1  
+kind: Deployment
+metadata:
+  name: shop
+spec: # Pod에 대한 정의
+  replicas: 3
+  selector:
+    matchLabels:
+      app: shop
+  template:  
+    metadata:  # Pod의 metadata 추가
+      labels:
+        app: shop  # Pod의 라벨
+    spec:
+      containers:
+      - name: shop
+        image: ekdms3868/portal:shop
+        resources: 
+          limits:
+            memory: "64Mi"
+            cpu: "250m"
+        ports:
+        - containerPort: 80
